@@ -358,11 +358,11 @@ where
     }
 }
 
-impl<'a, T> From<&'a [T]> for JsVec<T>
+impl<T> From<&'_ [T]> for JsVec<T>
 where
     T: JsSerialize,
 {
-    fn from(v: &'a [T]) -> Self {
+    fn from(v: &[T]) -> Self {
         JsVec {
             inner: v.into(),
             phantom: PhantomData,
@@ -370,29 +370,29 @@ where
     }
 }
 
-impl<'a, T> From<&'a mut [T]> for JsVec<T>
+impl<T> From<&'_ mut [T]> for JsVec<T>
 where
     T: JsSerialize,
 {
-    fn from(v: &'a mut [T]) -> Self {
+    fn from(v: &mut [T]) -> Self {
         (&*v).into()
     }
 }
 
-impl<'a, T> From<&'a Vec<T>> for JsVec<T>
+impl<T> From<&'_ Vec<T>> for JsVec<T>
 where
     T: JsSerialize,
 {
-    fn from(v: &'a Vec<T>) -> Self {
+    fn from(v: &Vec<T>) -> Self {
         (&**v).into()
     }
 }
 
-impl<'a, T> From<&'a mut Vec<T>> for JsVec<T>
+impl<T> From<&'_ mut Vec<T>> for JsVec<T>
 where
     T: JsSerialize,
 {
-    fn from(v: &'a mut Vec<T>) -> Self {
+    fn from(v: &mut Vec<T>) -> Self {
         (&**v).into()
     }
 }
