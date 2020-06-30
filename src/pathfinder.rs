@@ -432,11 +432,33 @@ where
                 heuristicWeight: @{heuristic_weight}
             })
         };
+        //In some cases, like if we are searching from a position with no walkable neighbors,
+        //js comes back with `null` here.
+        //For reasons opaque to me, this is bridged into f64::POSITIVE_INFINITY rather than stdweb::Value::Null
+        let cost: u32 = match js! {return @{&res}.cost;} {
+            stdweb::Value::Number(n) => {
+                //see if the number fits into u32
+                if let Some(u) = n.try_into().ok() {
+                    u
+                } else if let Some(f) = TryInto::<f64>::try_into(n).ok() {
+                    if f.is_infinite() {
+                        std::u32::MAX
+                    } else {
+                        panic!("Unknown floating-point {:?}", f);
+                    }
+                } else {
+                    panic!("Unknown number-type {:?}", n);
+                }
+            }
+            o => {
+                panic!("Unexpected cost value {:?}", o);
+            }
+        };
 
         SearchResults {
             path: js_unwrap!(@{&res}.path),
             ops: js_unwrap!(@{&res}.ops),
-            cost: js_unwrap!(@{&res}.cost),
+            cost: cost,
             incomplete: js_unwrap!(@{&res}.incomplete),
         }
     })
