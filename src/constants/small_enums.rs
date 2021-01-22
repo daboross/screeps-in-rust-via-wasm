@@ -1,24 +1,21 @@
 //! Various constants translated as small enums.
-use std::{borrow::Cow, fmt, str::FromStr};
+// use std::{borrow::Cow, fmt, str::FromStr};
 
 use enum_iterator::IntoEnumIterator;
 use num_derive::FromPrimitive;
-use parse_display::FromStr;
-use serde::{
-    de::{Deserializer, Error as _, Unexpected},
-    Deserialize, Serialize,
-};
 use serde_repr::{Deserialize_repr, Serialize_repr};
+use std::fmt;
+use wasm_bindgen::prelude::*;
+// use parse_display::FromStr;
+use serde::{Deserialize, Serialize};
 
-use super::{
-    find,
-    numbers::{TERRAIN_MASK_SWAMP, TERRAIN_MASK_WALL},
-};
-
+// bindgen can't take an i8, needs custom boundary functions
+/// Translates return code constants.
+//#[wasm_bindgen]
 #[derive(
-    Debug, PartialEq, Eq, Clone, Copy, FromPrimitive, Hash, Deserialize_repr, Serialize_repr,
+    Debug, PartialEq, Eq, Clone, Copy, Hash, FromPrimitive, Deserialize_repr, Serialize_repr,
 )]
-#[repr(i16)]
+#[repr(i8)]
 pub enum ReturnCode {
     Ok = 0,
     NotOwner = -1,
@@ -37,24 +34,78 @@ pub enum ReturnCode {
     GclNotEnough = -15,
 }
 
-impl ReturnCode {
-    /// Turns this return code into a result.
-    ///
-    /// `ReturnCode::Ok` is turned into `Result::Ok`, all other codes are turned
-    /// into `Result::Err(code)`
-    #[inline]
-    pub fn as_result(self) -> Result<(), Self> {
-        match self {
-            ReturnCode::Ok => Ok(()),
-            other => Err(other),
-        }
-    }
+// impl ReturnCode {
+//     /// Turns this return code into a result.
+//     ///
+//     /// `ReturnCode::Ok` is turned into `Result::Ok`, all other codes are turned
+//     /// into `Result::Err(code)`
+//     #[inline]
+//     pub fn as_result(self) -> Result<(), Self> {
+//         match self {
+//             ReturnCode::Ok => Ok(()),
+//             other => Err(other),
+//         }
+//     }
+// }
+
+// js_deserializable!(ReturnCode);
+
+/// Translates `FIND_*` constants.
+#[wasm_bindgen]
+#[derive(
+    Debug, PartialEq, Eq, Clone, Copy, Hash, FromPrimitive, Deserialize_repr, Serialize_repr,
+)]
+#[repr(u16)]
+pub enum Find {
+    /// Find all exit positions at the top of the room
+    ExitTop = 1,
+    ExitRight = 3,
+    ExitBottom = 5,
+    ExitLeft = 7,
+    Exit = 10,
+    Creeps = 101,
+    MyCreeps = 102,
+    HostileCreeps = 103,
+    SourcesActive = 104,
+    Sources = 105,
+    DroppedResources = 106,
+    Structures = 107,
+    MyStructures = 108,
+    HostileStructures = 109,
+    Flags = 110,
+    ConstructionSites = 111,
+    MySpawns = 112,
+    HostileSpawns = 113,
+    MyConstructionSites = 114,
+    HostileConstructionSites = 115,
+    Minerals = 116,
+    Nukes = 117,
+    Tombstones = 118,
+    PowerCreeps = 119,
+    MyPowerCreeps = 120,
+    HostilePowerCreeps = 121,
+    Deposits = 122,
+    Ruins = 123,
+    // todo these seem to not work when conditionally compiled out - they're not hurting to leave in but need to figure that out
+    //#[cfg(feature = "enable-score")]
+    ScoreContainers = 10011,
+    //#[cfg(feature = "enable-score")]
+    ScoreCollectors = 10012,
 }
 
-js_deserializable!(ReturnCode);
-
+/// Translates direction constants.
+#[wasm_bindgen]
 #[derive(
-    Debug, PartialEq, Eq, Clone, Copy, Hash, FromPrimitive, Serialize_repr, Deserialize_repr,
+    Debug,
+    PartialEq,
+    Eq,
+    Clone,
+    Copy,
+    Hash,
+    FromPrimitive,
+    Serialize_repr,
+    Deserialize_repr,
+    IntoEnumIterator,
 )]
 #[repr(u8)]
 pub enum Direction {
@@ -67,8 +118,6 @@ pub enum Direction {
     Left = 7,
     TopLeft = 8,
 }
-
-js_deserializable!(Direction);
 
 impl ::std::ops::Neg for Direction {
     type Output = Direction;
@@ -123,30 +172,40 @@ impl fmt::Display for Direction {
 /// Restricted more than `Direction` in that it can't be diagonal. Used as the
 /// result of [`Room::find_exit_to`].
 ///
-/// Can be converted to both [`find::Exit`] for immediate use of [`Room::find`]
+/// Can be converted to [`Find`] for immediate use of [`Room::find`]
 /// and [`Direction`].
 ///
 /// [`Room::find`]: crate::objects::Room::find
 /// [`Room::find_exit_to`]: crate::objects::Room::find_exit_to
+#[wasm_bindgen]
 #[derive(
-    Copy, Clone, Debug, FromPrimitive, Deserialize_repr, Serialize_repr, PartialEq, Eq, Hash,
+    Debug,
+    PartialEq,
+    Eq,
+    Clone,
+    Copy,
+    Hash,
+    FromPrimitive,
+    Serialize_repr,
+    Deserialize_repr,
+    IntoEnumIterator,
 )]
 #[repr(u8)]
 pub enum ExitDirection {
-    Top = Direction::Top as u8,
-    Right = Direction::Right as u8,
-    Bottom = Direction::Bottom as u8,
-    Left = Direction::Left as u8,
+    Top = 1,
+    Right = 3,
+    Bottom = 5,
+    Left = 7,
 }
 
-impl From<ExitDirection> for find::Exit {
+impl From<ExitDirection> for Find {
     #[inline]
     fn from(dir: ExitDirection) -> Self {
         match dir {
-            ExitDirection::Top => find::Exit::Top,
-            ExitDirection::Right => find::Exit::Right,
-            ExitDirection::Bottom => find::Exit::Bottom,
-            ExitDirection::Left => find::Exit::Left,
+            ExitDirection::Top => Find::ExitTop,
+            ExitDirection::Right => Find::ExitRight,
+            ExitDirection::Bottom => Find::ExitBottom,
+            ExitDirection::Left => Find::ExitLeft,
         }
     }
 }
@@ -163,8 +222,39 @@ impl From<ExitDirection> for Direction {
     }
 }
 
+/// Translates `LOOK_*` constants.
+#[wasm_bindgen]
+#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Serialize, Deserialize, IntoEnumIterator)]
+pub enum Look {
+    Creeps = "creep",
+    Energy = "energy",
+    Resources = "resource",
+    Sources = "source",
+    Minerals = "mineral",
+    Structures = "structure",
+    Flags = "flag",
+    ConstructionSites = "constructionSite",
+    Nukes = "nuke",
+    Terrain = "terrain",
+    Tombstones = "tombstone",
+    PowerCreeps = "powerCreep",
+    Deposits = "deposit",
+    Ruins = "ruin",
+}
+
+/// Translates `COLOR_*` constants.
+#[wasm_bindgen]
 #[derive(
-    Debug, PartialEq, Eq, Clone, Copy, FromPrimitive, Hash, Deserialize_repr, Serialize_repr,
+    Debug,
+    PartialEq,
+    Eq,
+    Clone,
+    Copy,
+    FromPrimitive,
+    Hash,
+    Deserialize_repr,
+    Serialize_repr,
+    IntoEnumIterator,
 )]
 #[repr(u8)]
 pub enum Color {
@@ -180,74 +270,44 @@ pub enum Color {
     White = 10,
 }
 
-js_deserializable!(Color);
-
-/// Terrain constant.
-///
-/// This constant is in a unique position of being represented both by strings
-/// and by integers in various parts of the API.
-///
-/// *Note:* This constant's `TryFrom<Value>` and `Deserialize` implementations
-/// _only work with the integer constants_. If you're ever consuming strings
-/// such as `"plain"`, `"swamp"`, `"wall"`, you can use the
-/// `__terrain_str_to_num` JavaScript function, [`FromStr`][std::str::FromStr]
-/// or [`Terrain::deserialize_from_str`].
-///
-/// See the [module-level documentation][crate::constants] for more details.
+/// Translates `TERRAIN_*` constants.
+#[wasm_bindgen]
 #[derive(
-    Copy,
-    Clone,
     Debug,
     PartialEq,
     Eq,
+    Clone,
+    Copy,
     Hash,
-    Deserialize_repr,
-    Serialize_repr,
     FromPrimitive,
-    FromStr,
+    Serialize_repr,
+    Deserialize_repr,
+    IntoEnumIterator,
 )]
 #[repr(u8)]
-#[display(style = "snake_case")]
 pub enum Terrain {
+    // There's no constant for plains, but the absense of a terrain value indicates a plain
     Plain = 0,
-    Wall = TERRAIN_MASK_WALL,
-    Swamp = TERRAIN_MASK_SWAMP,
+    // TERRAIN_MASK_WALL
+    Wall = 1,
+    // TERRAIN_MASK_SWAMP
+    Swamp = 2,
+    /* TERRAIN_MASK_LAVA, unimplemented in game
+     * Lava = 4, */
 }
 
-impl Terrain {
-    /// Helper function for deserializing from a string rather than from an
-    /// integer.
-    pub fn deserialize_from_str<'de, D: Deserializer<'de>>(d: D) -> Result<Self, D::Error> {
-        let s: Cow<'de, str> = Cow::deserialize(d)?;
-        Self::from_str(&s).map_err(|_| {
-            D::Error::invalid_value(Unexpected::Str(&s), &r#""plain", "wall" or "swamp""#)
-        })
-    }
-}
-
-js_deserializable!(Terrain);
-
-/// Creep part types.
-///
-/// *Note:* This constant's `TryFrom<Value>`, `Serialize` and `Deserialize`
-/// implementations only operate on made-up integer constants. If you're ever
-/// using these impls manually, use the `__part_num_to_str` and
-/// `__part_str_to_num` JavaScript functions, [`FromStr`][std::str::FromStr] or
-/// [`Part::deserialize_from_str`].
-///
-/// See the [module-level documentation][crate::constants] for more details.
-#[derive(Debug, PartialEq, Eq, Clone, Copy, Hash, Serialize_repr, Deserialize_repr, FromStr)]
-#[repr(u8)]
-#[display(style = "snake_case")]
+/// Translates body part constants.
+#[wasm_bindgen]
+#[derive(Debug, PartialEq, Eq, Clone, Copy, Hash, Deserialize, Serialize)]
 pub enum Part {
-    Move = 0,
-    Work = 1,
-    Carry = 2,
-    Attack = 3,
-    RangedAttack = 4,
-    Tough = 5,
-    Heal = 6,
-    Claim = 7,
+    Move = "move",
+    Work = "work",
+    Carry = "carry",
+    Attack = "attack",
+    RangedAttack = "ranged_attack",
+    Tough = "tough",
+    Heal = "heal",
+    Claim = "claim",
 }
 
 impl Part {
@@ -263,25 +323,27 @@ impl Part {
             Part::Tough => 10,
             Part::Heal => 250,
             Part::Claim => 600,
+            // I guess bindgen is adding a `#[non_exhaustive]` onto the enum and forcing us to do
+            // this:
+            _ => 0,
         }
     }
 
-    /// Helper function for deserializing from a string rather than a fake
-    /// integer value.
-    pub fn deserialize_from_str<'de, D: Deserializer<'de>>(d: D) -> Result<Self, D::Error> {
-        let s: Cow<'de, str> = Cow::deserialize(d)?;
-        Self::from_str(&s).map_err(|_| {
-            D::Error::invalid_value(
-                Unexpected::Str(&s),
-                &"a known constant string in BODYPARTS_ALL",
-            )
-        })
-    }
+    // /// Helper function for deserializing from a string rather than a fake
+    // /// integer value.
+    // pub fn deserialize_from_str<'de, D: Deserializer<'de>>(d: D) -> Result<Self,
+    // D::Error> {     let s: Cow<'de, str> = Cow::deserialize(d)?;
+    //     Self::from_str(&s).map_err(|_| {
+    //         D::Error::invalid_value(
+    //             Unexpected::Str(&s),
+    //             &"a known constant string in BODYPARTS_ALL",
+    //         )
+    //     })
+    // }
 }
 
-js_deserializable!(Part);
-
 /// Translates the `DENSITY_*` constants.
+#[wasm_bindgen]
 #[derive(
     Debug,
     PartialEq,
@@ -301,8 +363,6 @@ pub enum Density {
     High = 3,
     Ultra = 4,
 }
-
-js_deserializable!(Density);
 
 impl Density {
     /// Translates the `MINERAL_DENSITY` constant, the amount of mineral
@@ -350,8 +410,10 @@ impl Density {
     }
 }
 
-#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Serialize, Deserialize)]
-#[serde(rename_all = "camelCase")]
-pub enum PowerClass {
-    Operator,
+/// Translates `ORDER_*` constants.
+#[wasm_bindgen]
+#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Serialize, Deserialize, IntoEnumIterator)]
+pub enum OrderType {
+    Sell = "sell",
+    Buy = "buy",
 }

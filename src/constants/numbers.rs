@@ -3,11 +3,11 @@ use super::types::{ResourceType, StructureType};
 
 // OK and ERR_* defined in ReturnCode in `small_enums.rs`
 
-// FIND_* defined in `find.rs`
+// FIND_* defined in `small_enums.rs`
 
 // directions and colors defined in `small_enums.rs`
 
-// LOOK_* defined in `look.rs`
+// LOOK_* defined in `small_enums.rs`
 
 // OBSTACLE_OBJECT_TYPES not yet implemented
 
@@ -131,7 +131,9 @@ pub fn rampart_hits_max(rcl: u32) -> u32 {
 /// [`Creep::harvest`]: crate::objects::Creep::harvest
 pub const ENERGY_REGEN_TIME: u32 = 300;
 /// The total amount of a resource that must be accumulated in a dropped
-/// resource for one unit of that resource to decay each tick, rounded up.
+/// [`Resource`] for one unit of that resource to decay each tick, rounded up.
+///
+/// [`Resource`]: crate::objects::Resource
 pub const ENERGY_DECAY: u32 = 1000;
 
 /// Initial hits for spawn structures; consider using the
@@ -507,18 +509,7 @@ pub const GCL_MULTIPLY: u32 = 1_000_000;
 /// Maximum GCL for players allowed to spawn in a Novice area.
 pub const GCL_NOVICE: u32 = 3;
 
-/// Terrain bitmask value representing natural walls; represented by
-/// [`Terrain::Wall`] when using terrain functions.
-///
-/// [`Terrain::Wall`]: crate::constants::Terrain::Wall
-pub const TERRAIN_MASK_WALL: u8 = 1;
-/// Terrain bitmask value representing swamps; represented by [`Terrain::Swamp`]
-/// when using terrain functions.
-///
-/// [`Terrain::Swamp`]: crate::constants::Terrain::Swamp
-pub const TERRAIN_MASK_SWAMP: u8 = 2;
-/// Lava terrain, not implemented in game.
-pub const TERRAIN_MASK_LAVA: u8 = 4;
+// TERRAIN_* defined in `small_enums.rs`
 
 /// Maximum allowed construction sites at once per player.
 pub const MAX_CONSTRUCTION_SITES: u32 = 100;
@@ -531,7 +522,7 @@ pub const MINERAL_REGEN_TIME: u32 = 50_000;
 /// Translates the `MINERAL_MIN_AMOUNT` constant; currently unused in game (see
 /// [`Density::amount`] instead).
 ///
-/// [`Density::amount`]: crate::constants::minerals::Density::amount
+/// [`Density::amount`]: crate::constants::Density::amount
 #[inline]
 pub fn mineral_min_amount(mineral: ResourceType) -> Option<u32> {
     match mineral {
@@ -548,7 +539,7 @@ pub fn mineral_min_amount(mineral: ResourceType) -> Option<u32> {
 
 /// Currently unused in game (see [`Density::probability`] instead).
 ///
-/// [`Density::probability`]: crate::constants::minerals::Density::probability
+/// [`Density::probability`]: crate::constants::Density::probability
 pub const MINERAL_RANDOM_FACTOR: u32 = 2;
 
 // MINERAL_DENSITY, MINERAL_DENSITY_PROBABILITY defined in `small_enums.rs`
@@ -588,9 +579,12 @@ pub const DEPOSIT_DECAY_TIME: u32 = 50_000;
 pub const TERMINAL_HITS: u32 = 3000;
 /// Store capacity of terminal structures.
 pub const TERMINAL_CAPACITY: u32 = 300_000;
-/// Currently unused in game (see [`market::calc_transaction_cost`] instead).
+/// Currently unused in game (see [`market::calc_transaction_cost`] and
+/// [`TERMINAL_SEND_COST_SCALE`] instead).
 ///
 /// [`market::calc_transaction_cost`]: [`crate::market::calc_transaction_cost`].
+/// [`TERMINAL_SEND_COST_SCALE`]:
+/// [`crate::constants::TERMINAL_SEND_COST_SCALE`].
 pub const TERMINAL_SEND_COST: f32 = 0.1;
 /// Currently unused in game.
 pub const TERMINAL_MIN_SEND: u32 = 100;
@@ -656,7 +650,7 @@ pub fn ruin_decay_structures(structure_type: StructureType) -> Option<u32> {
 /// remain before decaying.
 pub const PORTAL_DECAY: u32 = 30_000;
 
-// ORDER_SELL / ORDER_BUY defined in `src/game.rs`
+// ORDER_SELL / ORDER_BUY defined in `small_enums.rs`
 
 /// Percentage of order value in credits charged as a fee for market listings.
 pub const MARKET_FEE: f32 = 0.05;
@@ -669,12 +663,12 @@ pub const MARKET_ORDER_LIFE_TIME: u32 = 30 * 24 * 3600 * 1000;
 /// Maximum number of total flags a player is allowed to have on a shard.
 pub const FLAGS_LIMIT: u32 = 10_000;
 
-/// Cost, paid from [`game::cpu::bucket`], to generate a pixel using
-/// [`game::cpu::generate_pixel`]
+/// Cost, paid from [`CpuInfo::bucket`], to generate a pixel using
+/// [`CpuInfo::generate_pixel`]
 ///
-/// [`game::cpu::bucket`]: crate::game::cpu::bucket
-/// [`game::cpu::generate_pixel`]: crate::game::cpu::generate_pixel
-pub const PIXEL_CPU_COST: u32 = 5000;
+/// [`CpuInfo::bucket`]: crate::game::cpu::CpuInfo::bucket
+/// [`CpuInfo::generate_pixel`]: crate::game::cpu::CpuInfo::generate_pixel
+pub const PIXEL_CPU_COST: u32 = 10_000;
 
 // Resources defined in `types.rs`
 
@@ -684,11 +678,11 @@ pub const PIXEL_CPU_COST: u32 = 5000;
 
 // REACTION_TIME defined in `recipes.rs`
 
-/// Seems to be currently unused
+/// The amount of time after spawning, in milliseconds, that random center room portals will become unstable and begin to decay, disappearing [`PORTAL_DECAY`] ticks later.
 pub const PORTAL_UNSTABLE: u32 = 10 * 24 * 3600 * 1000;
-/// Minimum lifetime, in milliseconds, of random center room portals
+/// Minimum time after a portal decays in a center room that a new portal will appear, in milliseconds.
 pub const PORTAL_MIN_TIMEOUT: u32 = 12 * 24 * 3600 * 1000;
-/// Maximum lifetime, in milliseconds, of random center room portals
+/// Maximum time after a portal decays in a center room that a new portal will appear, in milliseconds.
 pub const PORTAL_MAX_TIMEOUT: u32 = 22 * 24 * 3600 * 1000;
 
 /// Base value for power bank respawn time calculation.
@@ -748,12 +742,9 @@ pub const POWER_LEVEL_POW: u32 = 2;
 /// Time, in milliseconds, that a power creep must wait to respawn after dying.
 pub const POWER_CREEP_SPAWN_COOLDOWN: u32 = 8 * 3600 * 1000;
 /// Time, in milliseconds, after a deletion is started via
-/// [`AccountPowerCreep::delete`] that it can no longer be canceled via
-/// [`AccountPowerCreep::cancel_delete`].
+/// [`PowerCreep::delete`] that it can no longer be canceled.
 ///
-/// [`AccountPowerCreep::delete`]: crate::objects::AccountPowerCreep::delete
-/// [`AccountPowerCreep::cancel_delete`]:
-/// crate::objects::AccountPowerCreep::cancel_delete
+/// [`PowerCreep::delete`]: crate::objects::PowerCreep::delete
 pub const POWER_CREEP_DELETE_COOLDOWN: u32 = 24 * 3600 * 1000;
 /// Maximum level for power creeps.
 pub const POWER_CREEP_MAX_LEVEL: u32 = 25;

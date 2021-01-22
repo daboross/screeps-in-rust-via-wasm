@@ -1,6 +1,6 @@
 //! Constants, most copied from [the game constants].
 //!
-//! Last updated on 2020-06-06, `3bc7337807d380ffb29b9dcec40fc19e707c2476` from
+//! Last updated on 2020-12-13, `e4589666113334bb1f967b9a5540b642141b6dab` from
 //! <https://github.com/screeps/common/commits/master/lib/constants.js>.
 //!
 //! Currently missing:
@@ -9,77 +9,75 @@
 //! - BODYPARTS_ALL, RESOURCES_ALL, COLORS_ALL
 //! - POWER_INFO
 //!
-//! # Notes on Deserialization
-//!
-//! There are two general types of enum constants in this file. Some are
-//! represented by integers in the game - and those are represented by integers
-//! in screeps. Their [`serde::Deserialize`], `TryFrom<Value>` and
-//! [`num_traits::FromPrimitive`] implementations will convert from these
-//! integers.
-//!
-//! The other type is enums represented by strings in the game, but integers in
-//! this repository. This change in representation is done for efficiency, as
-//! transferring strings from JavaScript to Rust is much slower than a single
-//! integer.
-//!
-//! This second type of enum will also implement [`serde::Deserialize`],
-//! `TryFrom<Value>`, but these will not convert from the made-up integer
-//! values, and will fail converting from the constant strings from the game.
-//!
-//! To convert from constant strings, you have two options, depending on the
-//! context.
-//!
-//! If you need to manually consume from a value in JavaScript, there are two
-//! utility JavaScript functions per enum. They generally take the form
-//! `__TYPE_num_to_str` and `__TYPE_str_to_num`. For example,
-//! `__structure_type_num_to_str` and `__structure_type_str_to_num` convert
-//! between [`StructureType`] integer representations and string
-//! representations. See documentation on enums for more conversion functions.
-//!
-//! To use these, call the functions in JavaScript, like so:
-//!
-//! ```no_run
-//! use screeps::{game, traits::TryInto, StructureType};
-//! use stdweb::js;
-//!
-//! let spawns = game::spawns::values();
-//! let r: StructureType = (js! {
-//!     return __structure_type_str_to_num(@{spawns[0].as_ref()}.structureType);
-//! })
-//! .try_into()
-//! .expect("expected structure type to convert successfully");
-//! ```
-//!
-//! If you need to consume strings already in Rust, use either the [`FromStr`]
-//! trait, or one of the `deserialize_from_str` functions on each of these
-//! constants. To get back to these values from Rust native enums (instead of
-//! the integer representation we serialize to), use the [`Display`] trait or
-//! the `to_string` fuctions on the native enums.
-//!
-//! [the game constants]: https://github.com/screeps/common/blob/master/lib/constants.js
-//! [`FromStr`]: std::str::FromStr
-//! [`Display`]: std::fmt::Display
-pub mod find;
-pub mod look;
-mod numbers;
+// //! # Notes on Deserialization
+// //!
+// //! There are two general types of enum constants in this file. Some are
+// //! represented by integers in the game - and those are represented by integers
+// //! in screeps. Their [`serde::Deserialize`], `TryFrom<Value>` and
+// //! [`num_traits::FromPrimitive`] implementations will convert from these
+// //! integers.
+// //!
+// //! The other type is enums represented by strings in the game, but integers in
+// //! this repository. This change in representation is done for efficiency, as
+// //! transferring strings from JavaScript to Rust is much slower than a single
+// //! integer.
+// //!
+// //! This second type of enum will also implement [`serde::Deserialize`],
+// //! `TryFrom<Value>`, but these will not convert from the made-up integer
+// //! values, and will fail converting from the constant strings from the game.
+// //!
+// //! To convert from constant strings, you have two options, depending on the
+// //! context.
+// //!
+// //! If you need to manually consume from a value in JavaScript, there are two
+// //! utility JavaScript functions per enum. They generally take the form
+// //! `__TYPE_num_to_str` and `__TYPE_str_to_num`. For example,
+// //! `__structure_type_num_to_str` and `__structure_type_str_to_num` convert
+// //! between [`StructureType`] integer representations and string
+// //! representations. See documentation on enums for more conversion functions.
+// //!
+// //! To use these, call the functions in JavaScript, like so:
+// //!
+// //! ```no_run
+// //! use screeps::{game, traits::TryInto, StructureType};
+// //! use stdweb::js;
+// //!
+// //! let spawns = game::spawns::values();
+// //! let r: StructureType = (js! {
+// //!     return __structure_type_str_to_num(@{spawns[0].as_ref()}.structureType);
+// //! })
+// //! .try_into()
+// //! .expect("expected structure type to convert successfully");
+// //! ```
+// //!
+// //! If you need to consume strings already in Rust, use either the [`FromStr`]
+// //! trait, or one of the `deserialize_from_str` functions on each of these
+// //! constants. To get back to these values from Rust native enums (instead of
+// //! the integer representation we serialize to), use the [`Display`] trait or
+// //! the `to_string` fuctions on the native enums.
+// //!
+// //! [the game constants]: https://github.com/screeps/common/blob/master/lib/constants.js
+// //! [`FromStr`]: std::str::FromStr
+// //! [`Display`]: std::fmt::Display
+
+pub mod extra;
+pub mod numbers;
 mod recipes;
+pub mod seasonal;
 mod small_enums;
 mod types;
 
-pub use self::{
-    find::FindConstant,
-    look::{Look, LookConstant},
-    numbers::*,
-    recipes::FactoryRecipe,
-    small_enums::*,
-    types::*,
-};
+pub use self::{extra::*, numbers::*, recipes::FactoryRecipe, small_enums::*, types::*};
 
 /// Re-export of all constants related to [`Creep`] behavior and operations.
 ///
 /// [`Creep`]: crate::objects::Creep
 pub mod creep {
     pub use super::{
+        extra::{
+            CREEP_HITS_PER_PART, MOVE_POWER, RANGED_MASS_ATTACK_POWER_RANGE_1,
+            RANGED_MASS_ATTACK_POWER_RANGE_2, RANGED_MASS_ATTACK_POWER_RANGE_3,
+        },
         numbers::{
             ATTACK_POWER, BUILD_POWER, CARRY_CAPACITY, CREEP_CLAIM_LIFE_TIME, CREEP_CORPSE_RATE,
             CREEP_LIFE_TIME, CREEP_PART_MAX_ENERGY, CREEP_SPAWN_TIME, DISMANTLE_COST,
@@ -94,6 +92,7 @@ pub mod creep {
 /// Re-export of all constants related to structures.
 pub mod structure {
     pub use super::{
+        extra::{LAB_REACTION_RANGE, TERMINAL_SEND_COST_SCALE},
         numbers::{
             extension_energy_capacity, invader_core_creep_spawn_time, invader_core_expand_time,
             rampart_hits_max, ruin_decay_structures, stronghold_rampart_hits,
@@ -152,6 +151,7 @@ pub mod control {
 /// Re-export of all constants related to power.
 pub mod power {
     pub use super::{
+        extra::POWER_CREEP_HITS_PER_LEVEL,
         numbers::{
             POWER_BANK_CAPACITY_MAX, POWER_BANK_CAPACITY_MIN, POWER_BANK_DECAY, POWER_BANK_HITS,
             POWER_BANK_HIT_BACK, POWER_BANK_RESPAWN_TIME, POWER_CREEP_DELETE_COOLDOWN,
@@ -159,8 +159,7 @@ pub mod power {
             POWER_LEVEL_MULTIPLY, POWER_LEVEL_POW, POWER_SPAWN_ENERGY_CAPACITY,
             POWER_SPAWN_ENERGY_RATIO, POWER_SPAWN_POWER_CAPACITY,
         },
-        small_enums::PowerClass,
-        types::PowerType,
+        types::{PowerCreepClass, PowerType},
     };
 }
 

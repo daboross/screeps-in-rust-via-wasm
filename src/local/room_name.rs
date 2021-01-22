@@ -445,9 +445,6 @@ mod serde {
             deserializer.deserialize_str(RoomNameVisitor)
         }
     }
-
-    js_deserializable!(RoomName);
-    js_serializable!(RoomName);
 }
 
 #[cfg(test)]

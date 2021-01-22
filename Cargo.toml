@@ -1,6 +1,6 @@
 [package]
 name = "screeps-game-api"
-version = "0.8.0"
+version = "0.9.0"
 authors = ["David Ross <daboross@daboross.net>"]
 documentation = "https://docs.rs/screeps-game-api/"
 edition = "2018"
@@ -8,7 +8,6 @@ include = [
     "Cargo.toml",
     "Web.toml",
     "src/**/*",
-    "javascript/**/*",
     "tests/**/*",
     "examples/**/*",
     "README.md",
@@ -27,17 +26,29 @@ name = "screeps"
 travis-ci = { repository = "rustyscreeps/screeps-game-api" }
 
 [dependencies]
-arrayvec = "0.4"
-enum-iterator = "0.3"
-log = "0.4"
-num-derive = "0.2"
+arrayvec = "0.5"
+enum_dispatch = "0.3"
+enum-iterator = "0.6"
+js-sys = "0.3"
+num-derive = "0.3"
 num-traits = "0.2"
-parse-display = "0.1"
-serde = {version = "1", features = ["derive"]}
+serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 serde_repr = "0.1"
-stdweb = "0.4"
-stdweb-derive = "0.5"
+wasm-bindgen = { version = "0.2", features = ["serde-serialize"] }
 
 [features]
-check-all-casts = []
+# Disable the interface for pixel generation, not present on private servers or seasonal
+disable-generate-pixel = []
+
+# Disable the interface for inter-shard memory, not present on private servers or seasonal
+disable-inter-shard-memory = []
+
+# Enable score container, collector, and resource - used in season 1
+enable-score = []
+
+# Disable interfaces that don't exist (and will panic if used) on private servers
+private-server = ["disable-generate-pixel", "disable-inter-shard-memory"]
+
+# Seasonal server, season 1
+seasonal-season-1 = ["disable-generate-pixel", "disable-inter-shard-memory", "enable-score"]
