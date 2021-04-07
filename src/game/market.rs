@@ -268,26 +268,28 @@ pub fn get_all_orders(resource: Option<MarketResourceType>) -> Vec<Order> {
 /// get data for all resources by passing `None`
 pub fn get_history(resource: Option<MarketResourceType>) -> Vec<OrderHistoryRecord> {
     match resource {
-        Some(resource_type) => {
-            match resource_type {
-                MarketResourceType::Resource(ty) => js!(
-                    const history = Game.market.getHistory(__resource_type_num_to_str(@{ty as u32}));
-                    if (history && history.length > 0) {
-                        return history;
-                    } else {
-                        return [];
-                    }
-                ).try_into().unwrap(),
-                MarketResourceType::IntershardResource(ty) => js!(
-                    const history = Game.market.getHistory(__resource_type_num_to_str(@{ty as u32}));
-                    if (history && history.length > 0) {
-                        return history;
-                    } else {
-                        return [];
-                    }
-                ).try_into().unwrap(),
-            }
-        }
+        Some(resource_type) => match resource_type {
+            MarketResourceType::Resource(ty) => js!(
+                const history = Game.market.getHistory(__resource_type_num_to_str(@{ty as u32}));
+                if (history && history.length > 0) {
+                    return history;
+                } else {
+                    return [];
+                }
+            )
+            .try_into()
+            .unwrap(),
+            MarketResourceType::IntershardResource(ty) => js!(
+                const history = Game.market.getHistory(__resource_type_num_to_str(@{ty as u32}));
+                if (history && history.length > 0) {
+                    return history;
+                } else {
+                    return [];
+                }
+            )
+            .try_into()
+            .unwrap(),
+        },
         None => js_unwrap!(Game.market.getHistory()),
     }
 }

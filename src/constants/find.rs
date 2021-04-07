@@ -32,6 +32,9 @@ use crate::{
     traits::FromExpectedType,
 };
 
+#[cfg(feature = "enable-score")]
+use crate::objects::{ScoreCollector, ScoreContainer};
+
 /// Trait representing things which can be used in the 'find' function.
 ///
 /// Typically used with zero-sized structs in the
@@ -81,6 +84,10 @@ pub enum RoomObject {
     HostilePowerCreeps = 121,
     Deposits = 122,
     Ruins = 123,
+    #[cfg(feature = "enable-score")]
+    ScoreContainers = 10011,
+    #[cfg(feature = "enable-score")]
+    ScoreCollectors = 10012,
 }
 
 unsafe impl FindConstant for RoomObject {
@@ -169,4 +176,10 @@ typesafe_find_constants! {
     pub struct EXIT_BOTTOM = (Exit::Bottom as i16, Position);
     pub struct EXIT_LEFT = (Exit::Left as i16, Position);
     pub struct EXIT = (Exit::All as i16, Position);
+}
+
+#[cfg(feature = "enable-score")]
+typesafe_find_constants! {
+    pub struct SCORE_CONTAINERS = (10011, ScoreContainer);
+    pub struct SCORE_COLLECTORS = (10012, ScoreCollector);
 }

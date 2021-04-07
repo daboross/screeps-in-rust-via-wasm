@@ -101,12 +101,12 @@ impl Position {
 
 #[cfg(test)]
 mod test {
-    use crate::{Position, RoomName, Direction};
+    use crate::{Direction, Position, RoomName};
 
     #[test]
     fn test_direction_to() {
-        let a= Position::new(1, 1, RoomName::from_coords(1, 1).unwrap());
-        let b= Position::new(2, 2, RoomName::from_coords(1, 1).unwrap());
+        let a = Position::new(1, 1, RoomName::from_coords(1, 1).unwrap());
+        let b = Position::new(2, 2, RoomName::from_coords(1, 1).unwrap());
         assert_eq!(a.get_direction_to(&b), Some(Direction::BottomRight));
     }
 }

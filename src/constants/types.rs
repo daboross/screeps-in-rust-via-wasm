@@ -179,7 +179,7 @@ impl StructureType {
             PowerSpawn => POWER_SPAWN_HITS,
             Extractor => EXTENSION_HITS,
             Lab => LAB_HITS,
-            Terminal => TOWER_HITS,
+            Terminal => TERMINAL_HITS,
             Container => CONTAINER_HITS,
             Nuker => NUKER_HITS,
             Factory => FACTORY_HITS,
@@ -516,6 +516,10 @@ pub enum ResourceType {
     /// `"essence"`
     #[display("essence")]
     Essence = 84,
+    /// `"score"`
+    #[cfg(feature = "enable-score")]
+    #[display("score")]
+    Score = 10001,
 }
 
 #[derive(Copy, Clone, Debug)]
@@ -815,6 +819,8 @@ impl<'de> Deserialize<'de> for MarketResourceType {
             1002 => IntershardResource(CPUUnlock),
             1003 => IntershardResource(Pixel),
             1004 => IntershardResource(AccessKey),
+            #[cfg(feature = "enable-score")]
+            10001 => Resource(Score),
             _ => {
                 return Err(D::Error::invalid_value(
                     Unexpected::Unsigned(resource as u64),

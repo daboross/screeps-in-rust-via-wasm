@@ -63,6 +63,7 @@ pub mod find;
 pub mod look;
 mod numbers;
 mod recipes;
+pub mod seasonal;
 mod small_enums;
 mod types;
 

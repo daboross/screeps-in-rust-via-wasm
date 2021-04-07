@@ -27,6 +27,7 @@ pub mod macros;
 
 pub mod constants;
 pub mod game;
+#[cfg(not(feature = "disable-inter-shard-memory"))]
 pub mod inter_shard_memory;
 pub mod js_collections;
 pub mod local;

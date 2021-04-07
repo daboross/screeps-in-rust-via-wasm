@@ -41,3 +41,18 @@ stdweb-derive = "0.5"
 
 [features]
 check-all-casts = []
+
+# Disable the interface for pixel generation, not present on private servers or seasonal
+disable-generate-pixel = []
+
+# Disable the interface for inter-shard memory, not present on private servers or seasonal
+disable-inter-shard-memory = []
+
+# Enable score container, collector, and resource - used in season 1
+enable-score = []
+
+# Disable interfaces that don't exist (and will panic if used) on private servers
+private-server = ["disable-generate-pixel", "disable-inter-shard-memory"]
+
+# Seasonal server, season 1
+seasonal-season-1 = ["disable-generate-pixel", "disable-inter-shard-memory", "enable-score"]

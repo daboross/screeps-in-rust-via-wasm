@@ -122,6 +122,14 @@ reference_wrappers! {
     pub struct AccountPowerCreep(...);
 }
 
+#[cfg(feature = "enable-score")]
+reference_wrappers! {
+    #[reference(instance_of = "ScoreContainer")]
+    pub struct ScoreContainer(...);
+    #[reference(instance_of = "ScoreCollector")]
+    pub struct ScoreCollector(...);
+}
+
 /// Trait for things which have positions in the Screeps world.
 ///
 /// This can be freely implemented for anything with a way to get a position.
@@ -211,6 +219,12 @@ impl_has_id! {
     StructureWall,
     Tombstone,
     PowerCreep,
+}
+
+#[cfg(feature = "enable-score")]
+impl_has_id! {
+    ScoreContainer,
+    ScoreCollector,
 }
 
 /// Trait for all wrappers over Screeps JavaScript objects extending
@@ -480,6 +494,8 @@ pub unsafe trait Attackable: RoomObjectProperties {
 
 unsafe impl Transferable for StructureExtension {}
 unsafe impl Transferable for Creep {}
+#[cfg(feature = "enable-score")]
+unsafe impl Transferable for ScoreCollector {}
 unsafe impl Transferable for StructureContainer {}
 unsafe impl Transferable for StructureFactory {}
 unsafe impl Transferable for StructureLab {}
@@ -496,6 +512,8 @@ unsafe impl Transferable for PowerCreep {}
 // src/objects/structure.rs
 
 unsafe impl Withdrawable for Ruin {}
+#[cfg(feature = "enable-score")]
+unsafe impl Withdrawable for ScoreContainer {}
 unsafe impl Withdrawable for StructureExtension {}
 unsafe impl Withdrawable for StructureContainer {}
 unsafe impl Withdrawable for StructureFactory {}
@@ -549,6 +567,10 @@ unsafe impl RoomObjectProperties for Resource {}
 unsafe impl RoomObjectProperties for RoomObject {}
 unsafe impl RoomObjectProperties for Ruin {}
 unsafe impl RoomObjectProperties for Source {}
+#[cfg(feature = "enable-score")]
+unsafe impl RoomObjectProperties for ScoreContainer {}
+#[cfg(feature = "enable-score")]
+unsafe impl RoomObjectProperties for ScoreCollector {}
 unsafe impl RoomObjectProperties for StructureContainer {}
 unsafe impl RoomObjectProperties for StructureController {}
 unsafe impl RoomObjectProperties for StructureExtension {}
@@ -624,6 +646,10 @@ unsafe impl OwnedStructureProperties for StructureTower {}
 
 unsafe impl HasStore for Creep {}
 unsafe impl HasStore for Ruin {}
+#[cfg(feature = "enable-score")]
+unsafe impl HasStore for ScoreContainer {}
+#[cfg(feature = "enable-score")]
+unsafe impl HasStore for ScoreCollector {}
 unsafe impl HasStore for StructureContainer {}
 unsafe impl HasStore for StructureExtension {}
 unsafe impl HasStore for StructureFactory {}
@@ -660,6 +686,8 @@ unsafe impl HasCooldown for StructureTerminal {}
 
 unsafe impl CanDecay for Deposit {}
 unsafe impl CanDecay for Ruin {}
+#[cfg(feature = "enable-score")]
+unsafe impl CanDecay for ScoreContainer {}
 unsafe impl CanDecay for StructureContainer {}
 unsafe impl CanDecay for StructurePowerBank {}
 unsafe impl CanDecay for StructurePortal {}

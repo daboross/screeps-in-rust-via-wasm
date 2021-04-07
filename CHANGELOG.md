@@ -1,7 +1,12 @@
 Unreleased
 ==========
 
-
+- Add the `disable-generate-pixel`, `disable-inter-shard-memory`, and `enable-score` features
+  which enable or disable features that are not all present on all server environments.
+- Add the `private-server` feature which activates the `disable-generate-pixel` and
+  `disable-inter-shard-memory` because these interfaces don't exist on private servers.
+- Add the `seasonal-season-1` feature for season 1, which activates the `disable-generate-pixel`,
+  `disable-inter-shard-memory`, and `enable-score` features.
 
 0.9.0 (2021-01-23)
 ==================
