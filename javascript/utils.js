@@ -42,6 +42,10 @@ function __look_num_to_str(num) {
         case 11: return LOOK_POWER_CREEPS;
         case 12: return LOOK_DEPOSITS;
         case 13: return LOOK_RUINS;
+        case 10011: return LOOK_SCORE_CONTAINERS;
+        case 10012: return LOOK_SCORE_COLLECTORS;
+        case 10021: return LOOK_SYMBOL_CONTAINERS;
+        case 10022: return LOOK_SYMBOL_DECODERS;
         default: throw new Error("unknown look integer encoding " + num);
     }
 }
@@ -62,6 +66,10 @@ function __look_str_to_num(num) {
         case LOOK_POWER_CREEPS: return 11;
         case LOOK_DEPOSITS: return 12;
         case LOOK_RUINS: return 13;
+        case LOOK_SCORE_CONTAINERS: return 10011;
+        case LOOK_SCORE_COLLECTORS: return 10012;
+        case LOOK_SYMBOL_CONTAINERS: return 10021;
+        case LOOK_SYMBOL_DECODERS: return 10022;
         default: throw new Error("unknown look constant " + num);
     }
 }
@@ -210,6 +218,29 @@ function __resource_type_num_to_str(num) {
         case 1002: return CPU_UNLOCK;
         case 1003: return PIXEL;
         case 1004: return ACCESS_KEY;
+        case 10001: return RESOURCE_SCORE;
+        case 10201: return RESOURCE_SYMBOL_ALEPH;
+        case 10202: return RESOURCE_SYMBOL_BETH;
+        case 10203: return RESOURCE_SYMBOL_GIMMEL;
+        case 10204: return RESOURCE_SYMBOL_DALETH;
+        case 10205: return RESOURCE_SYMBOL_HE;
+        case 10206: return RESOURCE_SYMBOL_WAW;
+        case 10207: return RESOURCE_SYMBOL_ZAYIN;
+        case 10208: return RESOURCE_SYMBOL_HETH;
+        case 10209: return RESOURCE_SYMBOL_TETH;
+        case 10210: return RESOURCE_SYMBOL_YODH;
+        case 10211: return RESOURCE_SYMBOL_KAPH;
+        case 10212: return RESOURCE_SYMBOL_LAMEDH;
+        case 10213: return RESOURCE_SYMBOL_MEM;
+        case 10214: return RESOURCE_SYMBOL_NUN;
+        case 10215: return RESOURCE_SYMBOL_SAMEKH;
+        case 10216: return RESOURCE_SYMBOL_AYIN;
+        case 10217: return RESOURCE_SYMBOL_PE;
+        case 10218: return RESOURCE_SYMBOL_TSADE;
+        case 10219: return RESOURCE_SYMBOL_QOPH;
+        case 10220: return RESOURCE_SYMBOL_RES;
+        case 10221: return RESOURCE_SYMBOL_SIN;
+        case 10222: return RESOURCE_SYMBOL_TAW;
         default: throw new Error("unknown resource type integer encoding " + num);
     }
 }
@@ -304,6 +335,29 @@ function __resource_type_str_to_num(str) {
         case CPU_UNLOCK: return 1002;
         case PIXEL: return 1003;
         case ACCESS_KEY: return 1004;
+        case RESOURCE_SCORE: return 10001;
+        case RESOURCE_SYMBOL_ALEPH: return 10201;
+        case RESOURCE_SYMBOL_BETH: return 10202;
+        case RESOURCE_SYMBOL_GIMMEL: return 10203;
+        case RESOURCE_SYMBOL_DALETH: return 10204;
+        case RESOURCE_SYMBOL_HE: return 10205;
+        case RESOURCE_SYMBOL_WAW: return 10206;
+        case RESOURCE_SYMBOL_ZAYIN: return 10207;
+        case RESOURCE_SYMBOL_HETH: return 10208;
+        case RESOURCE_SYMBOL_TETH: return 10209;
+        case RESOURCE_SYMBOL_YODH: return 10210;
+        case RESOURCE_SYMBOL_KAPH: return 10211;
+        case RESOURCE_SYMBOL_LAMEDH: return 10212;
+        case RESOURCE_SYMBOL_MEM: return 10213;
+        case RESOURCE_SYMBOL_NUN: return 10214;
+        case RESOURCE_SYMBOL_SAMEKH: return 10215;
+        case RESOURCE_SYMBOL_AYIN: return 10216;
+        case RESOURCE_SYMBOL_PE: return 10217;
+        case RESOURCE_SYMBOL_TSADE: return 10218;
+        case RESOURCE_SYMBOL_QOPH: return 10219;
+        case RESOURCE_SYMBOL_RES: return 10220;
+        case RESOURCE_SYMBOL_SIN: return 10221;
+        case RESOURCE_SYMBOL_TAW: return 10222;
         default: throw new Error("unknown resource type " + str);
     }
 }

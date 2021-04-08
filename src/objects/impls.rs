@@ -26,6 +26,10 @@ mod structure_rampart;
 mod structure_spawn;
 mod structure_terminal;
 mod structure_tower;
+#[cfg(feature = "enable-symbols")]
+mod symbol_container;
+#[cfg(feature = "enable-symbols")]
+mod symbol_decoder;
 mod tombstone;
 
 pub use self::{

@@ -4,11 +4,13 @@
 //! generally means all state which is true this tick throughout the world.
 //!
 //! [`Game`]: http://docs.screeps.com/api/#Game
+use std::collections::HashMap;
+
 use crate::{
     local::{ObjectId, RawObjectId},
     objects::{HasId, RoomObject, SizedRoomObject},
     traits::TryInto,
-    ConversionError,
+    ConversionError, ResourceType,
 };
 
 pub mod cpu;
@@ -142,6 +144,39 @@ pub mod structures {
 /// [http://docs.screeps.com/api/#Game.time]: http://docs.screeps.com/api/#Game.time
 pub fn time() -> u32 {
     js_unwrap!(Game.time)
+}
+
+/// Your current score, as determined by the symbols you have decoded.
+///
+/// See [https://docs-season.screeps.com/api/#Game.score]
+///
+/// [https://docs-season.screeps.com/api/#Game.score]: https://docs-season.screeps.com/api/#Game.score
+#[cfg(feature = "enable-symbols")]
+pub fn score() -> u32 {
+    js_unwrap!(Game.score)
+}
+
+/// The symbols you've decoded after multiplier adjustments, used to determine
+/// your score.
+///
+/// See [https://docs-season.screeps.com/api/#Game.symbols]
+///
+/// [https://docs-season.screeps.com/api/#Game.symbols]: https://docs-season.screeps.com/api/#Game.symbols
+#[cfg(feature = "enable-symbols")]
+pub fn symbols() -> HashMap<ResourceType, u32> {
+    // `TryFrom<Value>` is only implemented for `HashMap<String, V>`.
+    //
+    // See https://github.com/koute/stdweb/issues/359.
+    let map: HashMap<String, u32> = js_unwrap!(Game.symbols);
+    map.into_iter()
+        .map(|(key, val)| {
+            (
+                key.parse()
+                    .expect("expected resource key in Game.symbols to be a known resource type"),
+                val,
+            )
+        })
+        .collect()
 }
 
 /// See [http://docs.screeps.com/api/#Game.getObjectById]

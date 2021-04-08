@@ -131,6 +131,7 @@ pub fn unlock() -> ReturnCode {
 /// [`Pixel`]: crate::constants::IntershardResourceType::Pixel
 /// [`PIXEL_CPU_COST`]: crate::constants::PIXEL_CPU_COST
 /// [`game::cpu::bucket`]: crate::game::cpu::bucket
+#[cfg(not(feature = "disable-generate-pixel"))]
 pub fn generate_pixel() -> ReturnCode {
     // undefined on private servers, return OK in that case
     js_unwrap!(typeof(Game.cpu.generatePixel) == "function" && Game.cpu.generatePixel() || 0)

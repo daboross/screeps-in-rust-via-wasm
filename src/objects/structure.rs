@@ -211,7 +211,6 @@ impl Structure {
             v => v
         )
     }
-
     pub fn as_has_store(&self) -> Option<&dyn HasStore> {
         match_some_structure_variants!(
             self,
