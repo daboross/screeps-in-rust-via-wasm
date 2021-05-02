@@ -63,7 +63,18 @@ impl StructureSpawn {
         .try_into()
         .expect("expected StructureSpawn::spawnCreep to return an integer return code")
     }
-
+///
+/// Examples
+///
+/// Give a new creep a `WORKER` boolean memory
+///
+/// ```no_run
+/// let mem = MemoryReference::new();
+/// mem.set("WORKER", true);
+/// spawn.spawn_creep_with_options(&body, &name, &SpawnOptions::new().memory(mem));
+/// ```
+///
+    
     // TODO: support actually using Spawning properties.
     pub fn is_spawning(&self) -> bool {
         js_unwrap!(Boolean(@{self.as_ref()}.spawning))
